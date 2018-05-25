@@ -6,14 +6,8 @@ const zlib = require('zlib');
 const url = require('url');
 const querystring = require('querystring');
 
-
-let writeAlertJsonInfo = function(req, res){
-	
-	res.write('alertJson = '+ JSON.stringify(alertJson)+ ';' );
-	res.write('alertApp.onready();');
-	res.write('</script></body></html>');
-	res.end();
-}
+const getRain = require('./get-rain.js');
+const latlon = require('./get-latlon.js');
 
 let homepage = function(req, res){
 	res.writeHead(200, {'Content-Type':'text/html'});
@@ -21,16 +15,7 @@ let homepage = function(req, res){
 	res.end('hello');
 }
 
-let newItem = function(req, res, config){
-	res.writeHead(200, {'Content-Type':'application/json'});
-	
-	config.response = res;
-	
-	//get6.getdata(config);
-	
-}
-
-let getData = function(req, res, postItems){
+let getData = async (req, res, postItems)=>{
 	
 	/*
 	res.writeHead(200, {
@@ -50,15 +35,29 @@ let getData = function(req, res, postItems){
 	});
 	*/
 	
-	const raw = fs.createReadStream('20180519105000-records.json');
-    
 	res.writeHead(200, {
 		'Content-Encoding': 'gzip',
 		'Content-Type':'application/json; charset=utf-8'
 	});
-    
+	/*
+	const raw = fs.createReadStream('20180519105000-records.json');
+
 	raw.pipe(zlib.createGzip()).pipe(res);
-    
+    */
+	
+	
+	let result = null;
+	
+	if(postItems.type === 'getLatlon'){
+		result = await latlon.get(postItems.time);
+	}else if(postItems.type === 'getRecord'){
+		result = await getRain.rain_range(postItems.time, postItems.timeSpan);
+	}
+	
+	zlib.gzip(JSON.stringify(result), function(error, buffer){
+		res.end(buffer)
+	});
+	
 	
 }
 
@@ -93,11 +92,13 @@ let startHttpServer = function(){
 				getData(req, res, postItems);
 			});	  
 		  
+		}else{
+			homepage(req, res);
 		}
 		
 	}).listen(8090,()=>{
 	   console.log('listen on port 8090...');
-	 });
+	});
 }
 
 //--------test begin---------------------

@@ -34,18 +34,21 @@ var typeSet = {
   }
 };
 
-jBinary.load('20180519105000.000', typeSet, function (err, binary) {
+let plot_5min_decode = function(data){
+
+    let binary = new jBinary(data, typeSet);
+	
 	let header = binary.read('header');
 	
 	header.description = iconv.decode(header.description, 'GBK');
 	header.levelDescription = iconv.decode(header.levelDescription, 'GBK');
-	console.log(JSON.stringify(header, null, 2));
+	//console.log(JSON.stringify(header, null, 2));
 	
 	let number = binary.read('number');
-	console.log(`number is ${number}`);
+	//console.log(`number is ${number}`);
 	
 	let countID = binary.read('countID');
-	console.log(`countID is ${countID}`);
+	//console.log(`countID is ${countID}`);
 	
 	let valueTypeName = ['int8', 'int8', 'int16', 'int32', 'int32', 'float32', 'float64', 'char'];
 	
@@ -53,11 +56,11 @@ jBinary.load('20180519105000.000', typeSet, function (err, binary) {
 	for(let i = 0; i< countID; i++){
 		let valueType = binary.read('valueType');
 		
-		console.log(JSON.stringify(valueType, null, 2));
+		//console.log(JSON.stringify(valueType, null, 2));
 		
 		valueTypes[valueType.id] = valueTypeName[valueType.type];
 	}
-	console.log(JSON.stringify(valueTypes, null, 2));
+	//console.log(JSON.stringify(valueTypes, null, 2));
   //
 	let index = 0, all_records = {};
 	while(index++ < number){
@@ -82,5 +85,9 @@ jBinary.load('20180519105000.000', typeSet, function (err, binary) {
 			vis: record.values[1201]
 		}
 	}
-	console.log(JSON.stringify(all_records, null, 2));
-});
+	//console.log(JSON.stringify(all_records, null, 2));
+	
+	return all_records;
+}
+
+exports.plot_5min = plot_5min_decode;
