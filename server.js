@@ -8,6 +8,7 @@ const querystring = require('querystring');
 
 const getRain = require('./get-rain.js');
 const latlon = require('./get-latlon.js');
+const getElement =  require('./get-element.js');
 
 let homepage = function(req, res){
 	res.writeHead(200, {'Content-Type':'text/html'});
@@ -51,7 +52,8 @@ let getData = async (req, res, postItems)=>{
 	if(postItems.type === 'getLatlon'){
 		result = await latlon.get(postItems.time);
 	}else if(postItems.type === 'getRecord'){
-		result = await getRain.rain_range(postItems.time, postItems.timeSpan);
+		//result = await getRain.rain_range(postItems.time, postItems.timeSpan);
+		result = await getElement.get(postItems.time, postItems['elements[]'], postItems.timeSpan);
 	}
 	
 	zlib.gzip(JSON.stringify(result), function(error, buffer){
