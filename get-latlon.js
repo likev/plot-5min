@@ -7,12 +7,12 @@ let current = moment()  //.format('YYYY-MM-DD HH:mm');
 
 let latlon = async (select_time = moment({ minute: 0 }) )=>{
 	
-	let prev_time = moment(select_time).subtract(1, 'hours').minutes(0);
+	let prev_time = moment(select_time).subtract(1, 'days').minutes(0);
 	
 	let prev_result = await cache.get_data(prev_time.format('YYYYMMDDHHmm'));
 	let select_result = await cache.get_data(select_time.format('YYYYMMDDHHmm')); 
 	
-	let together = {...prev_result, ...select_result};
+	let together = {...select_result, ...prev_result};
 	
 	let result = {};
 	for(let key in together){
