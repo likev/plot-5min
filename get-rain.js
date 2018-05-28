@@ -97,7 +97,7 @@ exports.rain_rate = async (select_time_str , span)=>{
 	
 	for(let key in rain_result){		
 		let rate = rain_result[key].rain *= 60/span;
-		rain_result[key]['rain-rate'] = rate.toFixed(2);
+		rain_result[key]['rain-rate'] = +rate.toFixed(2);
 		delete rain_result[key].rain;
 	}
 	
