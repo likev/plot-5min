@@ -16,7 +16,7 @@ let wind_diff = (wind1, wind2)=>{
 	
 	if(theta_diff < 0) theta_diff += 360;
 	
-	return [v_diff, theta_diff];
+	return [+v_diff.toFixed(1), +theta_diff.toFixed(1)];
 }
 
 let get_single_element_diff = async (select_time = moment(), element, span = 60)=>{
@@ -37,7 +37,7 @@ let get_single_element_diff = async (select_time = moment(), element, span = 60)
 			let diff = 0;
 			
 			if(element === 'wind2') diff = wind_diff(right[key][element], left[key][element]);
-			else diff = left[key][element] - right[key][element];
+			else diff = +(left[key][element] - right[key][element]).toFixed(1);
 			
 			diff_result[key][element+'-diff'] = diff;
 
@@ -56,9 +56,21 @@ let get_single_element = async (select_time = moment(), element )=>{
 		
 	for(let key in left){//
 		if(element in left[key])  {
+
+			let v = left[key][element];
+			
+			if(element === 'wind2' && Array.isArray(v)
+			&& typeof(v[0]) === 'number' && typeof(v[1]) === 'number'){
+				v[0] = +v[0].toFixed(1);
+				v[1] = +v[1].toFixed(1);
+			}else if(typeof(v) === 'number' && ['T', 'Td', 'P', 'rh', 'vis'].includes(element)){
+				v = +v.toFixed(1);
+			}else{
+				continue;//invalid v
+			}
 			
 			single_result[key] = {};
-			single_result[key][element] = left[key][element];
+			single_result[key][element] = v;
 
 		}
 	}
