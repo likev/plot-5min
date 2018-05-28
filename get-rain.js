@@ -90,3 +90,16 @@ exports.rain_range = async (select_time_str , span)=>{
 	
 	return rain_result;
 }
+
+exports.rain_rate = async (select_time_str , span)=>{
+	
+	let rain_result = await exports.rain_range(select_time_str , span);
+	
+	for(let key in rain_result){		
+		let rate = rain_result[key].rain *= 60/span;
+		rain_result[key]['rain-rate'] = rate.toFixed(2);
+		delete rain_result[key].rain;
+	}
+	
+	return rain_result;
+}
