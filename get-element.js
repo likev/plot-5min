@@ -100,6 +100,18 @@ let combain = (a, b)=>{
 	return a;
 }
 
+let random_key = (m)=>{
+  let keys = [];
+  for(let k in m) keys.push(k);
+  
+  keys.sort((a,b)=>{return Math.random() - 0.5 })
+  
+  let result = {}
+  for(let k of keys) result[k] = m[k];
+  
+  return result;
+}
+
 exports.get = async (select_time_str , elements, span)=>{
 	let select_time = moment(select_time_str, 'YYYY-MM-DD HH:mm');
 	
@@ -135,5 +147,5 @@ exports.get = async (select_time_str , elements, span)=>{
 		
 	}
 	
-	return result;
+	return random_key(result);
 }
