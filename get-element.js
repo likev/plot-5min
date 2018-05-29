@@ -147,5 +147,6 @@ exports.get = async (select_time_str , elements, span)=>{
 		
 	}
 	
-	return random_key(result);
+	//return random_key(result); //have no effect
+	return result;
 }
