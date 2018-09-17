@@ -31,7 +31,11 @@ let get_data = async (timestr)=>{
 		let jsonStr = JSON.stringify(record);//store json str to deep copy
 		console.log(`jsonStr.length: ${jsonStr.length}`);
 		
-		if(jsonStr.length > 500*1000){ //cache greater than 500K
+		//select_time.format('YYYYMMDDHHmm')
+		let select_time = moment(timestr, 'YYYYMMDDHHmm');
+		
+		if(select_time.isBefore( moment().subtract(2, 'hours') )
+		|| jsonStr.length > 500*1000){ //cache greater than 500K
 		
 			cache.records[timestr] = jsonStr;
 			++ cache.count;
