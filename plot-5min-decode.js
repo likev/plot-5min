@@ -81,7 +81,7 @@ let plot_5min_decode = function(data){
 			T: record.values[601],
 			Td: record.values[801],
 			rh: record.values[805],
-			rain: record.values[1001],
+			rain: record.values[1001],//maybe undefined!
 			vis: record.values[1201]
 		}
 	}

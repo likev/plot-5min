@@ -17,12 +17,22 @@ let rain_range = async (select_time = moment(), span = 60)=>{
 		let left = result;
 		
 		for(let key in left){//
+			
 			if('rain' in left[key] && key in right && 'rain' in right[key] )  {
+			
+				if(left[key].rain < 0){//should not occur!!!
+					console.log(`left-key:${key} rain:${left[key].rain}`);
+					delete left[key].rain;
+					continue;
+				}
 				
 				if(add) left[key].rain += right[key].rain;
 				else left[key].rain -= right[key].rain;
 				
-				if(left[key].rain < 0) delete left[key].rain;//should not occur!!!
+				if(left[key].rain < 0){//should not occur!!!
+					console.log(`key:${key} left.rain:${left[key].rain} right.rain:${right[key].rain}`);
+					delete left[key].rain;
+				}
 			}
 		}
 		

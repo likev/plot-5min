@@ -42,7 +42,8 @@ let get_data = async (timestr)=>{
 			cache.size += jsonStr.length; 
 		}
 		
-		return record;
+		//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description
+		return JSON.parse(jsonStr);//remove undefined value in object
 	}
 	 
 }
