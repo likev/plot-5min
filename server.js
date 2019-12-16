@@ -1,23 +1,21 @@
 "use strict";
 
-const fs = require('fs');
 const http = require('http');
 const zlib = require('zlib');
 const url = require('url');
 const querystring = require('querystring');
 
-const getRain = require('./get-rain.js');
 const latlon = require('./get-latlon.js');
-const getElement =  require('./get-element.js');
+const getElement = require('./get-element.js');
 
-let homepage = function(req, res){
-	res.writeHead(200, {'Content-Type':'text/html'});
+let homepage = function (_req, res) {
+	res.writeHead(200, { 'Content-Type': 'text/html' });
 
 	res.end('hello');
 }
 
-let getData = async (req, res, postItems)=>{
-	
+let getData = async (_req, res, postItems) => {
+
 	/*
 	res.writeHead(200, {
 		'Content-Type':'application/json',
@@ -35,71 +33,76 @@ let getData = async (req, res, postItems)=>{
 	  res.end(data); //JSON.stringify(data)
 	});
 	*/
-	
+
 	res.writeHead(200, {
 		'Content-Encoding': 'gzip',
-		'Content-Type':'application/json; charset=utf-8'
+		'Content-Type': 'application/json; charset=utf-8'
 	});
 	/*
 	const raw = fs.createReadStream('20180519105000-records.json');
 
 	raw.pipe(zlib.createGzip()).pipe(res);
     */
-	
-	
+
+
 	let result = null;
-	
-	if(postItems.type === 'getLatlon'){
+
+	if (postItems.type === 'getLatlon') {
 		result = await latlon.get(postItems.time);
-	}else if(postItems.type === 'getRecord'){
+	} else if (postItems.type === 'getRecord') {
 		//result = await getRain.rain_range(postItems.time, postItems.timeSpan);
 		result = await getElement.get(postItems.time, postItems['elements[]'], postItems.timeSpan);
 	}
-	
-	zlib.gzip(JSON.stringify(result), function(error, buffer){
+
+	zlib.gzip(JSON.stringify(result), function (_error, buffer) {
 		res.end(buffer)
 	});
-	
-	
+
+
 }
 
-let startHttpServer = function(){
-	http.createServer(function(req, res) {
+let startHttpServer = function () {
+	http.createServer(async (req, res) => {
 		const host = req.headers.host;
-		const hostname = url.parse('http://'+host).hostname;
+		const hostname = url.parse('http://' + host).hostname;
 
 		let pathname = url.parse(req.url).pathname;
-		console.log({host,hostname,pathname});
-        
-        var postData = '';     
-        var postItems = {};
-        
-        req.on('data', function(chunk){    
-            postData += chunk;
-        });
- 
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
-        res.setHeader('Access-Control-Allow-Headers', '*');
-        res.setHeader('Access-Control-Max-Age', '86400');
-        
-		if( pathname === '/' ){
+		console.log({ host, hostname, pathname });
+
+		var postData = '';
+		var postItems = {};
+
+		req.on('data', function (chunk) {
+			postData += chunk;
+		});
+
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
+		res.setHeader('Access-Control-Allow-Headers', '*');
+		res.setHeader('Access-Control-Max-Age', '86400');
+
+		if (pathname === '/') {
 			homepage(req, res);
-		}else if( pathname.slice(0,5) === '/data' ){
-			    
-			
-		  	req.on('end', function(){    
+		} else if (pathname.slice(0, 5) === '/data') {
+
+
+			req.on('end', async () => {
 				postItems = querystring.parse(postData);
 				console.log(postItems);
-				getData(req, res, postItems);
-			});	  
-		  
-		}else{
+				try {
+					await getData(req, res, postItems);
+				} catch {
+					res.end();
+				}
+
+			});
+
+		} else {
 			homepage(req, res);
 		}
-		
-	}).listen(8090,()=>{
-	   console.log('listen on port 8090...');
+
+	}).listen(8090, () => {
+		console.log('listen on port 8090...');
 	});
 }
 
@@ -109,6 +112,6 @@ startHttpServer();
 */
 //---------test end----------------------
 
-exports.start = function(){
+exports.start = function () {
 	startHttpServer();
 }
