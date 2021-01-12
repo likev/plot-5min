@@ -1,0 +1,17 @@
+// awesome.proto
+package awesomepackage;
+syntax = "proto3";
+
+//for test 
+message AwesomeMessage {
+    bytes awesome_field = 1; // becomes awesomeField
+}
+
+/* https://developers.google.com/protocol-buffers/docs/encoding
+*  https://github.com/likev/nmc_met_io/blob/master/nmc_met_io/DataBlock_pb2.py */
+
+message micapsStation {
+    bool error = false; //https://developers.google.com/protocol-buffers/docs/proto3#default
+    string status = 2; 
+	string content = 3; 
+}

@@ -1,3 +1,9 @@
+/*
+https://github.com/protobufjs/protobuf.js#using-proto-files
+http://10.69.72.112:8080/DataService?requestType=getLatestDataName&directory=ECMWF_HR/TMP/850&fileName=&filter=*.024
+https://www.evernote.com/shard/s99/sh/e92e2e7c-7bff-4710-9c9a-73c0fe3b3607/64362ec27441463ea57814f553babd2d
+*/
+
 var protobuf = require("protobufjs");
 
 const fs = require('fs');
